@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Title</title>
+            <script src="libs/d3/d3.min.js"></script>
+        </head>
+<body>
+<div id="container" style="width: 100%">
+    <!--    <svg width="800" height="600" style="background-color:lavender" viewBox="0 0 1000 800" >-->
+
+    </svg>
+
+</div>
+<script>
+
+
+    d3.csv("data/data_sample.csv",d3.autoType)
+        .then(
+            function (data){
+
+                //console.log(data.columns.slice(0,data.columns.length))
+                let padding=60
+                //let svg=d3.selectAll('svg')
+                let height=700
+                let width=1000
+                let viewboxheight=700
+                let viewboxwidht=1000
+                let keys=data.columns.slice(1,data.columns.length)
+                let pTime=d3.timeParse("%Y-%m")
+                let date_min_max
+//                console.log(date_min_max)
+                let stack=d3.stack()
+                    .keys(keys)
+                let stackStories=stack(data)
+                //console.log(d3.max(stackStories,d=>d3.max(d,d=>d[1])))
+                let x_axis = d3.scaleTime()
+                    .domain(d3.extent(data,function(d){return (d.date);}))
+                    .range([padding,viewboxwidht-padding])
+                let y_axis=d3.scaleLinear()
+                    .domain([0,d3.max(stackStories,d=>d3.max(d,d=>d[1]))])
+                    .range([viewboxheight-padding,padding])
+
+                let svg= d3.select('body')
+                    .append('svg')
+                    .attr('height',height)
+                    .attr('width', width)
+                    .attr('x','0')
+                    .attr('y','0')
+                    .attr('viewBox','0 0 '+(viewboxwidht)+' '+(viewboxheight)+'')
+                    .style('background-color','lavender')
+
+                stackcolors = ['#53706f',
+                    '#5ea5a3',
+                    '#96d7ac',
+                    '#c6f1d4']
+
+                //console.log(stackStories)
+                //let svg=d3.selectAll('svg')
+
+                // area chart code
+                let area = d3.area()
+                    .x(function(d, i) {
+                        return x_axis(d.data.date);
+                    })
+                    .y0(function(d) {
+                        return y_axis(d[0]);
+                    })
+                    .y1(function(d) {
+                        return y_axis(d[1]);
+                    });
+
+                svg.selectAll('path')
+                    .data(stackStories)
+                    .enter()
+                    .append('path')
+                    .style('fill', function(d, i) {
+                        return stackcolors[i];
+                    })
+                    .attr('d', area)
+
+                svg.append("g")
+                    .attr("transform","translate(0,"+(viewboxheight-padding+5)+")")
+                    .call(d3.axisBottom(x_axis))
+                svg.append("g")
+                    //to arrange ticks in the middle of bar, added half of the bar size to the start point
+                    .attr("transform","translate("+(padding-5)+",0)")
+                    .call(d3.axisLeft(y_axis).ticks(12))
+                //stacked bar chart code
+               /* let groups=svg.selectAll('g')
+                    .data(stackStories)
+                    .enter()
+                    .append('g')
+                    .style('fill',function (d,i){return stackcolors[i]})
+
+
+                groups.selectAll('rect')
+                    .data(function (d){return d})
+                    .enter()
+                    .append('rect')
+                    .attr('width',function (d){return x_axis(d[1])-x_axis(d[0])})
+                    .attr('x',function (d){return x_axis(d[0])})
+                    .attr('y',function (d){
+                        //console.log((d.data.date));
+                        return y_axis((d.data.date));})
+                    .attr('height',20)
+
+                //Appending x and y axis to the graph
+                svg.append("g")
+                    //translate uses viewBox height to show x axis and added 20 as height of last stacked bar
+                    .attr("transform","translate(0,"+(viewboxheight-padding+25)+")")
+                    .call(d3.axisBottom(x_axis))
+                svg.append("g")
+                    //to arrange ticks in the middle of bar, added half of the bar size to the start point
+                    .attr("transform","translate("+(padding-5)+",10)")
+                    .call(d3.axisLeft(y_axis).ticks(12))*/
+            }
+        )
+</script>
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>
